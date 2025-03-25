@@ -1,2 +1,5 @@
 # Atividade: Técnicas de Agrupamento
-aaaa
+
+- importações 
+pip install scikit-learn
+pip install seaborn
