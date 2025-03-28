@@ -3,42 +3,8 @@ from sklearn.datasets import load_iris
 from sklearn.datasets import load_wine
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-
-wine = load_wine()
-iris = load_iris()
-
-def printWine():
-    
-    df_wine = pd.DataFrame(wine.data, columns=wine.feature_names)
-
-    # Scatter plot de duas features
-    sns.scatterplot(x=df_wine.iloc[:, 0], y=df_wine.iloc[:, 1])
-    plt.xlabel(wine.feature_names[0])
-    plt.ylabel(wine.feature_names[1])
-    plt.title("Visualização do Dataset Wine sem Agrupamento")
-    plt.show()
-
-def printIris():
-    # Carregar o dataset Iris
-    
-    df_iris = pd.DataFrame(iris.data, columns=iris.feature_names)
-
-    # Scatter plot de duas features
-    sns.scatterplot(x=df_iris.iloc[:, 0], y=df_iris.iloc[:, 1])
-    plt.xlabel(iris.feature_names[0])
-    plt.ylabel(iris.feature_names[1])
-    plt.title("Visualização do Dataset Iris sem Agrupamento")
-    plt.show()
-
-
-#def particionalIris():
-
-#def particionalWine():
-
-#def hierarquicoIris():
-
-#def hierarquicoWine():
+from iris import *
+from wine import *
 
 if __name__ == '__main__':
     escolhas = [1,2,3,4,5,6,7]
