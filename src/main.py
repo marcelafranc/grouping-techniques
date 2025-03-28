@@ -13,8 +13,8 @@ if __name__ == '__main__':
         
         print("O que quer fazer?:")
         print("[1] Mostar Iris sem agrupamento")
-        print("[2] Agrupar Iris (Particional)")
-        print("[3] Agrupar Iris (Hierarquico)")
+        print("[2] Agrupar Iris (Hierarquico)")
+        print("[3] Agrupar Iris (Particional)")
         print("[4] Mostar Wine sem agrupamento")
         print("[5] Agrupar Wine (Hierarquico)")
         print("[6] Agrupar Wine (Particional)")
@@ -24,19 +24,10 @@ if __name__ == '__main__':
 
         if resposta not in escolhas: print("Escolha uma opcao valida")
 
-        if resposta == 7: exit()
-
         if resposta == 1: printIris() #iris sem agrupar
-
+        if resposta == 2: hierarquicoIris() #iris hierarquico
+        #if resposta == 3: #particionalIris() #iris particional
         if resposta == 4: printWine() #wine sem agrupar
-
-        #if resposta == 2 : #iris particinal
-
-        #if resposta == 3: #iris hierarquico
-
-        #if resposta == 5: #wine particional
-
-        #if resposta == 6: #wine hierarquico
-
-
-    
+        if resposta == 5: hierarquicoWine() # wine hierarquico
+        #if resposta == 6: particionalWine() #wine particional
+        if resposta == 7: exit()
