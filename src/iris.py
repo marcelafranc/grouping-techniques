@@ -5,6 +5,7 @@ import seaborn as sns
 from sklearn.datasets import load_iris
 from sklearn.cluster import AgglomerativeClustering
 from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.preprocessing import MinMaxScaler
 
 # Carregar o dataset Iris
 iris = load_iris()
@@ -14,6 +15,10 @@ def printIris():
     X = iris.data
     y = iris.target
     df_iris = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+    # Normalizar os dados
+    scaler = MinMaxScaler()
+    X_normalized = scaler.fit_transform(X)
 
     # Plotar grafico com corzinha
     plt.figure(figsize=(8, 6))
@@ -28,6 +33,10 @@ def printIris():
 def hierarquicoIris():
     X = iris.data
     k = 3  # Sei que Iris tem 3 grupos
+
+    # Normalizar os dados
+    scaler = MinMaxScaler()
+    X_normalized = scaler.fit_transform(X)
 
     # Preparar figuras para os dendrogramas e gráficos
     fig1, axes1 = plt.subplots(2, 2, figsize=(15, 10))  # DENDROGRAMA
