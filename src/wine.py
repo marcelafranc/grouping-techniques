@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.datasets import load_wine
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering, KMeans
 from scipy.cluster.hierarchy import dendrogram, linkage
 from sklearn.preprocessing import MinMaxScaler
 
@@ -34,6 +34,23 @@ def printWine():
     plt.colorbar(label='Classe')
     plt.show()
 
+# Método do Cotovelo para determinar k
+def metodo_cotovelo(X_normalized):
+    inertias = []
+    # Tentar diferentes números de clusters (de 1 a 10 clusters)
+    for k in range(1, 11):
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(X_normalized)
+        inertias.append(kmeans.inertia_)
+
+    # Plotar o gráfico do cotovelo
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(1, 11), inertias, marker='o')
+    plt.title('Método do Cotovelo para Determinação de k')
+    plt.xlabel('Número de Clusters (k)')
+    plt.ylabel('Inertia')
+    plt.show()
+
 # Agrupamento Hierarquico do Wine
 def hierarquicoWine():
     X = wine.data
@@ -42,6 +59,17 @@ def hierarquicoWine():
     # Normalizar os dados
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
+
+    #COTOVELO
+    metodo_cotovelo(X_normalized)  # Mostrar o gráfico do cotovelo antes de perguntar ao usuário
+
+    # QUANTOS CLUSTERS
+    k = int(input("Digite o número de clusters (k): "))
+
+    # Verificar se o valor de k é válido (maior ou igual a 1)
+    while k < 1:
+        print("Número de clusters inválido. O valor de k deve ser maior ou igual a 1.")
+        k = int(input("Digite o número de clusters (k): "))
 
 
     # Preparar figuras para os dendrogramas e gráficos
