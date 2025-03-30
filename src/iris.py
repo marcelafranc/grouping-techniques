@@ -143,7 +143,7 @@ def particionalIris(num_iterations=100):
 
     # Iterar várias vezes para minimizar o erro quadrático
     for i in range(num_iterations):
-        kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1)  # n_init=1 para inicialização aleatória
+        kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1, init='random')  # n_init=1 para inicialização aleatória
         kmeans.fit(X_normalized)
         
         # Verificar o erro quadrático (inertia) e atualizar o melhor modelo
@@ -151,6 +151,12 @@ def particionalIris(num_iterations=100):
             best_inertia = kmeans.inertia_
             best_labels = kmeans.labels_
             best_centroids = kmeans.cluster_centers_
+        print("INERCIA ", i ,": ", kmeans.inertia_)
+    
+    print("Melhor inercia: ", best_inertia)
+
+    # Desnormalizar os centróides
+    best_centroids_original = scaler.inverse_transform(best_centroids)
 
     # Definir uma paleta de cores fixa para os clusters
     cluster_colors = plt.cm.viridis(np.linspace(0, 1, k_optimal))
@@ -165,12 +171,14 @@ def particionalIris(num_iterations=100):
     # Plotar os pontos com a cor de cada cluster e formato baseado na espécie
     for i, species_label in enumerate(np.unique(y)):
         species_indices = np.where(y == species_label)[0]
-        plt.scatter(X_normalized[species_indices, 0], X_normalized[species_indices, 1], 
+        # Desnormalizar os pontos para exibição
+        X_species = scaler.inverse_transform(X_normalized[species_indices])
+        plt.scatter(X_species[:, 0], X_species[:, 1], 
                     c=cluster_colors[best_labels[species_indices]],  # Usando as cores fixas para clusters
                     marker=markers[i], label=species[i], alpha=0.7)
 
     # Plotando os centróides (com as cores fixas de seus respectivos clusters)
-    plt.scatter(best_centroids[:, 0], best_centroids[:, 1], s=200, c=cluster_colors, marker='X', label='Centroids')
+    plt.scatter(best_centroids_original[:, 0], best_centroids_original[:, 1], s=200, c=cluster_colors, marker='X', label='Centroids')
 
     # Configurações do gráfico
     plt.xlabel('PetalWidth (cm)')
