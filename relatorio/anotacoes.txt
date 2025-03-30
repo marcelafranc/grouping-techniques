@@ -1,4 +1,5 @@
-link base de dados iris: https://www.kaggle.com/datasets/saurabh00007/iriscsv?resource=download
+IRIS: https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_iris.html
+WINE: https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_wine.html
 
 hierarquico
 https://www.youtube.com/watch?v=zXtMvcgl594

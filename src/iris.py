@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import load_iris
 from sklearn.cluster import AgglomerativeClustering, KMeans
+from sklearn.metrics import silhouette_score
 from scipy.cluster.hierarchy import dendrogram, linkage
 from sklearn.preprocessing import MinMaxScaler
 
@@ -125,7 +126,7 @@ def tecnica_elbow(X, max_k=10):
     return k_best
 
 # Função de K-means iterativo
-def particionalIris(num_iterations=100):
+def particionalIris(num_iterations=1000):
     X = iris.data[:, [2, 3]]  # PetalLength e PetalWidth (atributos que queremos usar)
     y = iris.target  # As espécies da planta
 
@@ -137,6 +138,7 @@ def particionalIris(num_iterations=100):
     k_optimal = tecnica_elbow(X_normalized)
 
     # Inicializar variáveis para armazenar o melhor modelo
+    best_silhouette = -1
     best_inertia = np.inf
     best_labels = None
     best_centroids = None
@@ -145,15 +147,26 @@ def particionalIris(num_iterations=100):
     for i in range(num_iterations):
         kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1, init='random')  # n_init=1 para inicialização aleatória
         kmeans.fit(X_normalized)
+
+        # Calcular o Silhouette Score para esta execução
         
-        # Verificar o erro quadrático (inertia) e atualizar o melhor modelo
-        if kmeans.inertia_ < best_inertia:
-            best_inertia = kmeans.inertia_
+        silhouette_avg = silhouette_score(X, kmeans.labels_)
+        inertia = kmeans.inertia_  # Calcular a inércia
+
+        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}, Inércia: {inertia}")
+        
+
+        # Verificar o melhor modelo com base no índice de silhueta e inércia
+        # Aqui, você pode adicionar uma lógica para priorizar um critério ou combinar os dois
+        if silhouette_avg > best_silhouette and inertia < best_inertia:
+            best_silhouette = silhouette_avg
+            best_inertia = inertia
             best_labels = kmeans.labels_
             best_centroids = kmeans.cluster_centers_
-        print("INERCIA ", i ,": ", kmeans.inertia_)
+            best_trial = i
+       
     
-    print("Melhor inercia: ", best_inertia)
+    print(f"Melhor Silhueta: {best_silhouette}, Melhor Inércia: {best_inertia}, Obtido no trial {best_trial + 1}")
 
     # Desnormalizar os centróides
     best_centroids_original = scaler.inverse_transform(best_centroids)
@@ -183,7 +196,7 @@ def particionalIris(num_iterations=100):
     # Configurações do gráfico
     plt.xlabel('PetalWidth (cm)')
     plt.ylabel('PetalLength (cm)')
-    plt.title(f'Clusters com K={k_optimal} - Melhor Distribuição de Centróides')
+    plt.title(f'Agrupamento particional do dataset IRIS, 1000 iterações')
 
     # Exibir apenas a legenda das espécies (com os formatos) e os centróides
     plt.legend(loc='best')

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.datasets import load_wine
 from sklearn.cluster import AgglomerativeClustering, KMeans
+from sklearn.metrics import silhouette_score
 from scipy.cluster.hierarchy import dendrogram, linkage
 from sklearn.preprocessing import MinMaxScaler
 
@@ -106,7 +107,7 @@ def hierarquicoWine():
     plt.show()
 
 # Função para a Técnica do Cotovelo
-def tecnica_elbow(X, max_k=15):
+def tecnica_elbow(X, max_k=10):
     inertias = []
     k_values = range(2, max_k + 1)  # Começamos em 2 porque k=1 não faz sentido para clustering
 
@@ -129,7 +130,7 @@ def tecnica_elbow(X, max_k=15):
     return k_best
 
 # Função de K-means iterativo
-def particionalWine(num_iterations=100):
+def particionalWine(num_iterations=1000):
     wine = load_wine()
     X = wine.data[:, [0, 1, 2]]  # Alcohol, malic acid, ash e color intensity(atributos que queremos usar)
 
@@ -141,6 +142,7 @@ def particionalWine(num_iterations=100):
     k_optimal = tecnica_elbow(X_normalized)
 
     # Inicializar variáveis para armazenar o melhor modelo
+    best_silhouette = -1
     best_inertia = np.inf
     best_labels = None
     best_centroids = None
@@ -149,14 +151,22 @@ def particionalWine(num_iterations=100):
     for i in range(num_iterations):
         kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1, init='random')  # n_init=1 para inicialização aleatória
         kmeans.fit(X_normalized)
+
+        silhouette_avg = silhouette_score(X, kmeans.labels_)
+        inertia = kmeans.inertia_  # Calcular a inércia
+
+        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}, Inércia: {inertia}")
         
-        # Verificar o erro quadrático (inertia) e atualizar o melhor modelo
-        if kmeans.inertia_ < best_inertia:
-            best_inertia = kmeans.inertia_
+        # Verificar o melhor modelo com base no índice de silhueta e inércia
+        # Aqui, você pode adicionar uma lógica para priorizar um critério ou combinar os dois
+        if silhouette_avg > best_silhouette and inertia < best_inertia:
+            best_silhouette = silhouette_avg
+            best_inertia = inertia
             best_labels = kmeans.labels_
             best_centroids = kmeans.cluster_centers_
-        print("INERCIA ", i ,": ", kmeans.inertia_)
-    print("Melhor inercia: ", best_inertia)
+            best_trial = i
+        
+    print(f"Melhor Silhueta: {best_silhouette}, Melhor Inércia: {best_inertia}, Obtido no trial {best_trial + 1}")
 
     # Desnormalizar os centróides
     best_centroids_original = scaler.inverse_transform(best_centroids)
@@ -201,7 +211,7 @@ def particionalWine(num_iterations=100):
     # Configurações do gráfico
     plt.xlabel('Malic Acid (g/L)')
     plt.ylabel('Alcohol (%)')
-    plt.title(f'Clusters com K={k_optimal} - Melhor Distribuição de Centróides')
+    plt.title(f'Agrupamento particional do dataset WINE, 1000 iterações')
 
     plt.legend(loc='best')
     plt.show()
