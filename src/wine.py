@@ -72,16 +72,14 @@ def hierarquicoWine():
     X_normalized = scaler.fit_transform(X)
 
     # Exibir dendrograma
-    plot_dendrogram(X)
+    #plot_dendrogram(X)
     
     # DETERMINA AUTOMATICAMENTE O NUMERO DE CLUSTERS
     n_clusters = determinar_n_clusters(X)
     print(f"Número de clusters sugerido: {n_clusters}")
     
-    # Figuras grafico dispersao
+    # Figura para gráficos de dispersão
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-
-    # Lista metodos linkage e titulos
     linkages = ["ward", "complete", "average", "single"]
     titles = [
         "Método Ward",
@@ -89,21 +87,34 @@ def hierarquicoWine():
         "Método Average Linkage",
         "Método Single Linkage"
     ]
-
-    # Aplicacao dos metodos linkage
+    
     for i, linkage_method in enumerate(linkages):
-        # Aplicacao AGLOMERATIVO
         clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
         y_hr = clustering.fit_predict(X)
-
-        # Grafico de dispersao
+        
         axes[i//2, i%2].scatter(X[:, 0], X[:, 1], c=y_hr, cmap="viridis", s=50, edgecolor='k')
         axes[i//2, i%2].set_title(titles[i])
-
-    # Ajusta layout
-    fig.tight_layout()
-
-    # Mostrar graficos
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Exibir dendrogramas para os quatro métodos de linkage
+    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+    titles = [
+        "Dendrograma - Método Ward",
+        "Dendrograma - Método Complete Linkage",
+        "Dendrograma - Método Average Linkage",
+        "Dendrograma - Método Single Linkage"
+    ]
+    
+    for i, linkage_method in enumerate(linkages):
+        Z = linkage(X, method=linkage_method)
+        dendrogram(Z, ax=axes[i//2, i%2])
+        axes[i//2, i%2].set_title(titles[i])
+        axes[i//2, i%2].set_xlabel("Amostras")
+        axes[i//2, i%2].set_ylabel("Distância")
+    
+    plt.tight_layout()
     plt.show()
 
 # Função para a Técnica do Cotovelo
