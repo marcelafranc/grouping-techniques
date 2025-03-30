@@ -11,6 +11,8 @@ from sklearn.preprocessing import MinMaxScaler
 iris = load_iris()
 
 def printIris():
+    # Carregar o dataset Iris
+    iris = load_iris()
     X = iris.data
     y = iris.target
     df_iris = pd.DataFrame(iris.data, columns=iris.feature_names)
@@ -19,13 +21,22 @@ def printIris():
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
 
-    # Plotar gráfico
+    # Atributos para o gráfico
+    petal_length = X_normalized[:, 2]  # Petal Length
+    petal_width = X_normalized[:, 3]   # Petal Width
+
+    # Formas geométricas baseadas na espécie
+    markers = ['o', '^', 's']  # 'o' para Setosa, '^' para Versicolor, 's' para Virginica
+
+    # Plotando o gráfico sem agrupamento
     plt.figure(figsize=(8, 6))
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', edgecolor='k')
-    plt.xlabel(iris.feature_names[0])
-    plt.ylabel(iris.feature_names[1])
+    for i in range(3):
+        plt.scatter(petal_width[y == i], petal_length[y == i], marker=markers[i], label=iris.target_names[i], edgecolor='k', alpha=0.7)
+
+    plt.xlabel('Petal Width (cm)')
+    plt.ylabel('Petal Length (cm)')
     plt.title("Visualização do Dataset Iris sem Agrupamento")
-    plt.colorbar(label='Classe')
+    plt.legend(title='Species')
     plt.show()
 
 # Função para determinar automaticamente o número de clusters
