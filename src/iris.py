@@ -125,7 +125,7 @@ def tecnica_elbow(X, max_k=10):
     return k_best
 
 # Função de K-means iterativo
-def particionalIris(num_iterations=10):
+def particionalIris(num_iterations=100):
     X = iris.data[:, [2, 3]]  # PetalLength e PetalWidth (atributos que queremos usar)
     y = iris.target  # As espécies da planta
 
@@ -173,8 +173,8 @@ def particionalIris(num_iterations=10):
     plt.scatter(best_centroids[:, 0], best_centroids[:, 1], s=200, c=cluster_colors, marker='X', label='Centroids')
 
     # Configurações do gráfico
-    plt.xlabel('PetalWidth (Coordenada X)')
-    plt.ylabel('PetalLength (Coordenada Y)')
+    plt.xlabel('PetalWidth (cm)')
+    plt.ylabel('PetalLength (cm)')
     plt.title(f'Clusters com K={k_optimal} - Melhor Distribuição de Centróides')
 
     # Exibir apenas a legenda das espécies (com os formatos) e os centróides

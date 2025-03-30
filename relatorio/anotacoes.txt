@@ -14,8 +14,8 @@ DIMENSÕES DO GRAFICO (PARTICIONAL):
     WINE:
         -Alcohol: Coordenada Y GRAFICO
         -malic acid: coordenada X GRAFICO
-        -ash: cor do ponto (menos-> cor mais clara, mais-> cor mais escura)
-        -color intensity: tamanho do ponto
+        -ash: tamanho do ponto (menos-> menos ash, mais-> mais ash)
+ 
 
     IRIS:
         -SPECIES: formas geometricas (triangulo, bola, quadrado)
@@ -28,7 +28,6 @@ DIMENSÕES DO GRAFICO (PARTICIONAL):
 ATRIBUTOS ESCOLHIDOS WINE:
     -Alcohol
     -malic acid
-    -color intensity
     -ash
 
 ATRIBUTOS ESCOLHIDOS IRIS:

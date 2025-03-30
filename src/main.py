@@ -29,5 +29,5 @@ if __name__ == '__main__':
         if resposta == 3: particionalIris() #iris particional
         if resposta == 4: printWine() #wine sem agrupar
         if resposta == 5: hierarquicoWine() # wine hierarquico
-        #if resposta == 6: particionalWine() #wine particional
+        if resposta == 6: particionalWine() #wine particional
         if resposta == 7: exit()
