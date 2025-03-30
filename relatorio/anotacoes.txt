@@ -13,31 +13,29 @@ Wine Dataset: Possui 178 amostras de três tipos diferentes de vinho, com 13 atr
 DIMENSÕES DO GRAFICO (PARTICIONAL):
     WINE:
         -Alcohol: Coordenada Y GRAFICO
-        -Quality: coordenada X GRAFICO
-        -ph: cor do ponto
-        -residual sugar: tamanho do ponto
+        -malic acid: coordenada X GRAFICO
+        -ash: cor do ponto (menos-> cor mais clara, mais-> cor mais escura)
+        -color intensity: tamanho do ponto
 
     IRIS:
         -SPECIES: formas geometricas (triangulo, bola, quadrado)
         -petalLEnght: coordenada Y
         -petalWidth: Coordenada X 
-        -sepalLEngth: cor (claro -> escuro)
-        -sepalLwidht: tamanho do ponto (menor -> maior)
+
         
 
 
 ATRIBUTOS ESCOLHIDOS WINE:
-    -alcohol 
-    -quality 
-    -pH
-    -residual sugar
+    -Alcohol
+    -malic acid
+    -color intensity
+    -ash
 
 ATRIBUTOS ESCOLHIDOS IRIS:
     -species
     -PetalLengh
     -PetalWidth
-    -sepalWidth
-    -sepalLEngth
+
 
 
 

@@ -22,8 +22,8 @@ def printIris():
     X_normalized = scaler.fit_transform(X)
 
     # Atributos para o gráfico
-    petal_length = X_normalized[:, 2]  # Petal Length
-    petal_width = X_normalized[:, 3]   # Petal Width
+    petal_length = X[:, 2]  # Petal Length
+    petal_width = X[:, 3]   # Petal Width
 
     # Formas geométricas baseadas na espécie
     markers = ['o', '^', 's']  # 'o' para Setosa, '^' para Versicolor, 's' para Virginica

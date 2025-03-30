@@ -10,22 +10,37 @@ from sklearn.preprocessing import MinMaxScaler
 # Carregar o dataset Wine
 wine = load_wine()
 
+
+
 def printWine():
+    # Carregar o dataset Wine
+    wine = load_wine()
     X = wine.data
     y = wine.target
-    df_wine = pd.DataFrame(wine.data, columns=wine.feature_names)
+    df_wine = pd.DataFrame(X, columns=wine.feature_names)
 
-    # Normalizar os dados
-    scaler = MinMaxScaler()
-    X_normalized = scaler.fit_transform(X)
+    # Atributos para o gráfico
+    alcohol = X[:, 0]        # Coordenada Y (Álcool)
+    malic_acid = X[:, 1]     # Coordenada X (Ácido málico)
+    ash = X[:, 2]            # Cor do ponto (Cinzas)
+    color_intensity = X[:, 9]  # Tamanho do ponto (Intensidade da cor)
 
     # Plotar gráfico
-    plt.figure(figsize=(8, 6))
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', edgecolor='k')
-    plt.xlabel(wine.feature_names[0])
-    plt.ylabel(wine.feature_names[1])
-    plt.title("Visualização do Dataset Wine sem Agrupamento")
-    plt.colorbar(label='Classe')
+    plt.figure(figsize=(10, 8))
+    scatter = plt.scatter(malic_acid, alcohol, c=ash, s=color_intensity*25, cmap='viridis', edgecolor='k')
+    
+    # Adicionar título e rótulos
+    plt.xlabel('Malic Acid')
+    plt.ylabel('Alcohol')
+    plt.title("Visualização do Dataset Wine")
+
+    # Adicionar colorbar para mostrar a escala da cor (ash)
+    plt.colorbar(scatter, label='Ash')
+
+    # Adicionar uma legenda para o tamanho dos pontos
+    plt.legend(['Pontos maiores indicam maior intensidade da cor do vinho', 'Pontos menores indicam menor intensidade da cor do vinho'], loc='upper right')
+
+    # Mostrar o gráfico
     plt.show()
 
 # Função para determinar automaticamente o número de clusters
