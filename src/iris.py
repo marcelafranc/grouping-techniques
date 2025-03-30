@@ -62,6 +62,7 @@ def plot_dendrogram(X):
 # Agrupamento Hierárquico da Iris
 def hierarquicoIris():
     X = iris.data
+    y = iris.target
 
     # Normalizar os dados
     scaler = MinMaxScaler()
@@ -70,6 +71,13 @@ def hierarquicoIris():
     # Determinar automaticamente o número de clusters
     n_clusters = determinar_n_clusters(X)
     print(f"Número de clusters sugerido: {n_clusters}")
+    
+    # Atributos para o gráfico
+    petal_length = X[:, 2]  # Petal Length
+    petal_width = X[:, 3]   # Petal Width
+
+    # Formas geométricas baseadas na espécie
+    markers = ['o', '^', 's']  # 'o' para Setosa, '^' para Versicolor, 's' para Virginica
     
     # Figura para gráficos de dispersão
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
@@ -85,8 +93,15 @@ def hierarquicoIris():
         clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
         y_hr = clustering.fit_predict(X)
         
-        axes[i//2, i%2].scatter(X[:, 0], X[:, 1], c=y_hr, cmap="viridis", s=50, edgecolor='k')
+        for j in range(3):
+            axes[i//2, i%2].scatter(petal_width[y_hr == j], petal_length[y_hr == j], 
+                                    marker=markers[j], label=iris.target_names[j], 
+                                    edgecolor='k', alpha=0.7)
+        
         axes[i//2, i%2].set_title(titles[i])
+        axes[i//2, i%2].set_xlabel('Petal Width (cm)')
+        axes[i//2, i%2].set_ylabel('Petal Length (cm)')
+        axes[i//2, i%2].legend(title='Clusters')
     
     plt.tight_layout()
     plt.show()
@@ -109,6 +124,7 @@ def hierarquicoIris():
     
     plt.tight_layout()
     plt.show()
+
 
 
 # Função para a Técnica do Cotovelo

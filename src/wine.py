@@ -11,8 +11,6 @@ from sklearn.preprocessing import MinMaxScaler
 # Carregar o dataset Wine
 wine = load_wine()
 
-
-
 def printWine():
     # Carregar o dataset Wine
     wine = load_wine()
@@ -37,7 +35,7 @@ def printWine():
     plt.title("Visualização do Dataset Wine")
 
     # Adicionar colorbar para mostrar a escala da cor (ash)
-
+    #plt.colorbar()
 
     plt.legend(['Pontos maiores indicam maior quantidade de Ash (Material inorgânico) no vinho', 'Pontos menores indicam menor quantidade de Ash (Material inorgânico) no vinho'], loc='upper right')
 
@@ -65,16 +63,20 @@ def plot_dendrogram(X):
 
 # Agrupamento Hierárquico do Wine
 def hierarquicoWine():
-    X = wine.data
-
+    # Carregar o dataset Wine
+    wine = load_wine()
+    X = wine.data[:, [0, 1, 2]] 
+    y = wine.target
+    
     # Normalizar os dados
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
-
-    # Exibir dendrograma
-    #plot_dendrogram(X)
     
-    # DETERMINA AUTOMATICAMENTE O NUMERO DE CLUSTERS
+    alcohol = X[:, 0]        # Y (alcool)
+    malic_acid = X[:, 1]     # X (acido malico)
+    ash = X_normalized[:, 2] # tamanho dos pontos
+    
+    # Determinar automaticamente o número de clusters
     n_clusters = determinar_n_clusters(X)
     print(f"Número de clusters sugerido: {n_clusters}")
     
@@ -92,8 +94,10 @@ def hierarquicoWine():
         clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
         y_hr = clustering.fit_predict(X)
         
-        axes[i//2, i%2].scatter(X[:, 0], X[:, 1], c=y_hr, cmap="viridis", s=50, edgecolor='k')
+        scatter = axes[i//2, i%2].scatter(malic_acid, alcohol, c=y_hr, cmap='viridis', s=ash*100, edgecolor='k')
         axes[i//2, i%2].set_title(titles[i])
+        axes[i//2, i%2].set_xlabel('Malic Acid ( g/L )')
+        axes[i//2, i%2].set_ylabel('Alcohol %')
     
     plt.tight_layout()
     plt.show()
@@ -116,6 +120,7 @@ def hierarquicoWine():
     
     plt.tight_layout()
     plt.show()
+
 
 # Função para a Técnica do Cotovelo
 def tecnica_elbow(X, max_k=10):
