@@ -144,6 +144,12 @@ def tecnica_elbow(X, max_k=10):
     return k_best
 
 # Função de K-means iterativo
+
+
+
+
+
+
 def particionalIris(num_iterations=1000):
     X = iris.data[:, [2, 3]]  # PetalLength e PetalWidth (atributos que queremos usar)
     y = iris.target  # As espécies da planta
@@ -157,7 +163,7 @@ def particionalIris(num_iterations=1000):
 
     # Inicializar variáveis para armazenar o melhor modelo
     best_silhouette = -1
-    best_inertia = np.inf
+    
     best_labels = None
     best_centroids = None
 
@@ -169,22 +175,19 @@ def particionalIris(num_iterations=1000):
         # Calcular o Silhouette Score para esta execução
         
         silhouette_avg = silhouette_score(X, kmeans.labels_)
-        inertia = kmeans.inertia_  # Calcular a inércia
+        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}")
 
-        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}, Inércia: {inertia}")
+        
         
 
-        # Verificar o melhor modelo com base no índice de silhueta e inércia
-        # Aqui, você pode adicionar uma lógica para priorizar um critério ou combinar os dois
-        if silhouette_avg > best_silhouette and inertia < best_inertia:
+        if silhouette_avg > best_silhouette:
             best_silhouette = silhouette_avg
-            best_inertia = inertia
             best_labels = kmeans.labels_
             best_centroids = kmeans.cluster_centers_
             best_trial = i
        
     
-    print(f"Melhor Silhueta: {best_silhouette}, Melhor Inércia: {best_inertia}, Obtido no trial {best_trial + 1}")
+    print(f"Melhor Silhueta: {best_silhouette}, Obtido no trial {best_trial + 1}")
 
     # Desnormalizar os centróides
     best_centroids_original = scaler.inverse_transform(best_centroids)

@@ -133,86 +133,51 @@ def tecnica_elbow(X, max_k=10):
 # Função de K-means iterativo
 def particionalWine(num_iterations=1000):
     wine = load_wine()
-    X = wine.data[:, [0, 1, 2]]  # Alcohol, malic acid, ash e color intensity(atributos que queremos usar)
+    X = wine.data[:, [0, 1, 2]]  # Alcohol, Malic Acid, Ash
 
-    # Normalizar os dados para o KMeans
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
-
-    # Encontrar o número ótimo de clusters com a técnica do cotovelo
     k_optimal = tecnica_elbow(X_normalized)
 
-    # Inicializar variáveis para armazenar o melhor modelo
     best_silhouette = -1
-    best_inertia = np.inf
     best_labels = None
     best_centroids = None
 
-    # Iterar várias vezes para minimizar o erro quadrático
     for i in range(num_iterations):
-        kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1, init='random')  # n_init=1 para inicialização aleatória
+        kmeans = KMeans(n_clusters=k_optimal, random_state=None, n_init=1, init='random')
         kmeans.fit(X_normalized)
-
-        silhouette_avg = silhouette_score(X, kmeans.labels_)
-        inertia = kmeans.inertia_  # Calcular a inércia
-
-        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}, Inércia: {inertia}")
         
-        # Verificar o melhor modelo com base no índice de silhueta e inércia
-        # Aqui, você pode adicionar uma lógica para priorizar um critério ou combinar os dois
-        if silhouette_avg > best_silhouette and inertia < best_inertia:
+        silhouette_avg = silhouette_score(X_normalized, kmeans.labels_)
+        print(f"Iteração {i + 1}, Silhouette Score: {silhouette_avg}")
+        
+        if silhouette_avg > best_silhouette:
             best_silhouette = silhouette_avg
-            best_inertia = inertia
             best_labels = kmeans.labels_
             best_centroids = kmeans.cluster_centers_
             best_trial = i
-        
-    print(f"Melhor Silhueta: {best_silhouette}, Melhor Inércia: {best_inertia}, Obtido no trial {best_trial + 1}")
 
-    # Desnormalizar os centróides
+    print(f"Melhor Silhueta: {best_silhouette}, Obtido no trial {best_trial + 1}")
+
     best_centroids_original = scaler.inverse_transform(best_centroids)
-
-    # Ajustando o tamanho dos pontos com base no valor de "Ash"
-    ash_scaled = np.interp(X[:, 2], (np.min(X[:, 2]), np.max(X[:, 2])), (10, 200))  # Escalona o tamanho para visualização
-
-    # Definindo uma paleta de cores distintas
+    ash_scaled = np.interp(X[:, 2], (np.min(X[:, 2]), np.max(X[:, 2])), (10, 200))
     colors = plt.cm.get_cmap('tab20', k_optimal)
 
-    # Plotando o gráfico
     plt.figure(figsize=(10, 8))
+    scatter = plt.scatter(X[:, 1], X[:, 0], c=best_labels, cmap=colors, s=ash_scaled, alpha=0.7, edgecolor='k')
 
-    # Mapeando a cor dos clusters
-    scatter = plt.scatter(
-        X[:, 1],  # Malic Acid → eixo X
-        X[:, 0],  # Alcohol → eixo Y
-        c=best_labels,  # Cor do ponto baseada no cluster
-        cmap=colors,
-        s=ash_scaled,  # Tamanho do ponto (com base em "Ash")
-        alpha=0.7,
-        edgecolor='k'
-    )
-
-    # Plotando os centróides com a mesma cor dos seus clusters
     for cluster_id in range(k_optimal):
         plt.scatter(
-            best_centroids_original[cluster_id, 1],  # Malic Acid (X)
-            best_centroids_original[cluster_id, 0],  # Alcohol (Y)
-            c=[colors(cluster_id / k_optimal)],  # Cor do centróide com base no cluster
-            s=200,  # Tamanho fixo para centróides
-            marker='X',  # Marcador de centróide
+            best_centroids_original[cluster_id, 1],
+            best_centroids_original[cluster_id, 0],
+            c=[colors(cluster_id / k_optimal)],
+            s=200,
+            marker='X',
             edgecolor='black',
             label=f'Centroid {cluster_id}'
         )
 
-    min_alcohol = np.min(X[:, 0])
-    plt.ylim(min_alcohol - 0.5, np.max(X[:, 0]) + 0.5)
-    min_malic = np.min(X[:, 1])
-    plt.xlim(min_malic - 0.5, np.max(X[:, 1]) + 0.5)
-
-    # Configurações do gráfico
     plt.xlabel('Malic Acid (g/L)')
     plt.ylabel('Alcohol (%)')
     plt.title(f'Agrupamento particional do dataset WINE, 1000 iterações')
-
     plt.legend(loc='best')
     plt.show()
