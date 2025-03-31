@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import silhouette_score
 import seaborn as sns
 from sklearn.datasets import load_wine
 from sklearn.cluster import AgglomerativeClustering, KMeans
@@ -42,16 +43,7 @@ def printWine():
     # Mostrar o gráfico
     plt.show()
 
-# Função para determinar automaticamente o número de clusters
-def determinar_n_clusters(X):
-    Z = linkage(X)
-    distancias = Z[:, 2]  # Coluna das distâncias das fusões
-    dif_dist = np.diff(distancias)  # Diferença entre alturas consecutivas
-    maior_salto = np.argmax(dif_dist)  # Índice do maior salto
-    n_clusters = len(X) - maior_salto  # Número de clusters
-    return n_clusters
-
-# Função para plotar dendrograma
+# Função para plotar dendrograma - tira
 def plot_dendrogram(X):
     Z = linkage(X)
     plt.figure(figsize=(10, 6))
@@ -65,22 +57,32 @@ def plot_dendrogram(X):
 def hierarquicoWine():
     # Carregar o dataset Wine
     wine = load_wine()
-    X = wine.data[:, [0, 1, 2]] 
-    y = wine.target
+    X = wine.data[:, [0, 1, 2]]
     
     # Normalizar os dados
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
+   
+   # 1- DENDROGRAMAS PRA DECIDIR ONDE TRACAR A LINHA (DEFINIR K)
+    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
     
-    alcohol = X[:, 0]        # Y (alcool)
-    malic_acid = X[:, 1]     # X (acido malico)
-    ash = X_normalized[:, 2] # tamanho dos pontos
+    for i, linkage_method in enumerate(linkages):
+        Z = linkage(X_normalized, method=linkage_method)
+        dendrogram(Z, ax=axes[i//2, i%2])
+        axes[i//2, i%2].set_title(f"Dendrograma - {titles[i]}")
+        axes[i//2, i%2].set_xlabel("Amostras")
+        axes[i//2, i%2].set_ylabel("Distância")
     
-    # Determinar automaticamente o número de clusters
-    n_clusters = determinar_n_clusters(X)
-    print(f"Número de clusters sugerido: {n_clusters}")
-    
-    # Figura para gráficos de dispersão
+    plt.tight_layout()
+    plt.show()
+
+    # 2 - DEFINIR O NUMERO DE CLUSTERS (DEFINE K) -- obs: melhor k para iris é 3
+    # "we draw a horizontal line to the longest line that traverses maximum distance up and down
+    #  without intersecting the merging points. So we draw a horizontal line and the number of 
+    # verticle lines it intersects is the optimal number of clusters."
+    n_clusters = int(input("Digite k: "))
+
+    # # 3 - GRAFICOS DE DISPERSAO USANDO K DEFINIDO (MELHOR = 3)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
     linkages = ["ward", "complete", "average", "single"]
     titles = [
@@ -92,9 +94,9 @@ def hierarquicoWine():
     
     for i, linkage_method in enumerate(linkages):
         clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
-        y_hr = clustering.fit_predict(X)
+        y_hr = clustering.fit_predict(X_normalized)
         
-        scatter = axes[i//2, i%2].scatter(malic_acid, alcohol, c=y_hr, cmap='viridis', s=ash*100, edgecolor='k')
+        scatter = axes[i//2, i%2].scatter(X[:, 1], X[:, 0], c=y_hr, cmap='viridis', s=X[:, 2] * 50, edgecolor='k')
         axes[i//2, i%2].set_title(titles[i])
         axes[i//2, i%2].set_xlabel('Malic Acid ( g/L )')
         axes[i//2, i%2].set_ylabel('Alcohol %')
@@ -102,24 +104,7 @@ def hierarquicoWine():
     plt.tight_layout()
     plt.show()
     
-    # Exibir dendrogramas para os quatro métodos de linkage
-    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-    titles = [
-        "Dendrograma - Método Ward",
-        "Dendrograma - Método Complete Linkage",
-        "Dendrograma - Método Average Linkage",
-        "Dendrograma - Método Single Linkage"
-    ]
     
-    for i, linkage_method in enumerate(linkages):
-        Z = linkage(X, method=linkage_method)
-        dendrogram(Z, ax=axes[i//2, i%2])
-        axes[i//2, i%2].set_title(titles[i])
-        axes[i//2, i%2].set_xlabel("Amostras")
-        axes[i//2, i%2].set_ylabel("Distância")
-    
-    plt.tight_layout()
-    plt.show()
 
 
 # Função para a Técnica do Cotovelo
