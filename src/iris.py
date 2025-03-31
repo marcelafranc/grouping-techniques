@@ -40,15 +40,14 @@ def printIris():
     plt.legend(title='Species')
     plt.show()
 
-# Função para plotar dendrograma - tira
-def plot_dendrogram(X):
-    Z = linkage(X)
-    plt.figure(figsize=(10, 6))
-    dendrogram(Z)
-    plt.title("Dendrograma")
-    plt.xlabel("Amostras")
-    plt.ylabel("Distância")
-    plt.show()
+# FUNCAO N_CLUSTERS (MATEMATICA)
+def determinar_n_clusters(X):
+     Z = linkage(X)
+     distancias = Z[:, 2]  # Coluna das distâncias das fusões
+     dif_dist = np.diff(distancias)  # Diferença entre alturas consecutivas
+     maior_salto = np.argmax(dif_dist)  # Índice do maior salto
+     n_clusters = len(X) - maior_salto  # Número de clusters
+     return n_clusters
 
 # Agrupamento Hierárquico da Iris
 def hierarquicoIris():
@@ -90,7 +89,9 @@ def hierarquicoIris():
     # "we draw a horizontal line to the longest line that traverses maximum distance up and down
     #  without intersecting the merging points. So we draw a horizontal line and the number of 
     # verticle lines it intersects is the optimal number of clusters."
-    n_clusters = int(input("Digite k: "))
+    #n_clusters = int(input("Digite k: "))
+    n_clusters = determinar_n_clusters(X)
+    print(f"Número de clusters sugerido: {n_clusters}")
 
     # 3 - GRAFICOS DE DISPERSAO USANDO K DEFINIDO (MELHOR = 3)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))

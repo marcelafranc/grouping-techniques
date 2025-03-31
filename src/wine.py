@@ -43,15 +43,28 @@ def printWine():
     # Mostrar o gráfico
     plt.show()
 
-# Função para plotar dendrograma - tira
-def plot_dendrogram(X):
-    Z = linkage(X)
-    plt.figure(figsize=(10, 6))
-    dendrogram(Z)
-    plt.title("Dendrograma")
-    plt.xlabel("Amostras")
-    plt.ylabel("Distância")
+# Método para determinar o número de clusters usando o Silhouette Score
+def metodo_silhouette(X_normalized):
+    scores = []
+    # Testar diferentes números de clusters (de 2 a 10)
+    for k in range(2, 11):
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(X_normalized)
+        score = silhouette_score(X_normalized, kmeans.labels_)
+        scores.append(score)
+
+    # Plotar o gráfico do Silhouette Score
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(2, 11), scores, marker='o')
+    plt.title('Silhouette Score para Determinação de k')
+    plt.xlabel('Número de Clusters (k)')
+    plt.ylabel('Silhouette Score')
     plt.show()
+
+    # Encontrar o k com o melhor Silhouette Score
+    best_k = scores.index(max(scores)) + 2  # Porque a iteração começa de 2
+    print(f"O melhor número de clusters (k) baseado no Silhouette Score é: {best_k}")
+    return best_k
 
 # Agrupamento Hierárquico do Wine
 def hierarquicoWine():
@@ -63,8 +76,15 @@ def hierarquicoWine():
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
    
-   # 1- DENDROGRAMAS PRA DECIDIR ONDE TRACAR A LINHA (DEFINIR K)
+    # 1- DENDROGRAMAS PRA DECIDIR ONDE TRACAR A LINHA (DEFINIR K)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+    linkages = ["ward", "complete", "average", "single"]
+    titles = [
+        "Método Ward",
+        "Método Complete Linkage",
+        "Método Average Linkage",
+        "Método Single Linkage"
+    ]
     
     for i, linkage_method in enumerate(linkages):
         Z = linkage(X_normalized, method=linkage_method)
@@ -76,13 +96,10 @@ def hierarquicoWine():
     plt.tight_layout()
     plt.show()
 
-    # 2 - DEFINIR O NUMERO DE CLUSTERS (DEFINE K) -- obs: melhor k para iris é 3
-    # "we draw a horizontal line to the longest line that traverses maximum distance up and down
-    #  without intersecting the merging points. So we draw a horizontal line and the number of 
-    # verticle lines it intersects is the optimal number of clusters."
-    n_clusters = int(input("Digite k: "))
+    # 2 - UTILIZAR SILHOUETTE SCORE PARA DETERMINAR O MELHOR K
+    best_k = metodo_silhouette(X_normalized)
 
-    # # 3 - GRAFICOS DE DISPERSAO USANDO K DEFINIDO (MELHOR = 3)
+    # 3 - GRAFICOS DE DISPERSAO USANDO K DEFINIDO (MELHOR k)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
     linkages = ["ward", "complete", "average", "single"]
     titles = [
@@ -93,7 +110,7 @@ def hierarquicoWine():
     ]
     
     for i, linkage_method in enumerate(linkages):
-        clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
+        clustering = AgglomerativeClustering(n_clusters=best_k, linkage=linkage_method)
         y_hr = clustering.fit_predict(X_normalized)
         
         scatter = axes[i//2, i%2].scatter(X[:, 1], X[:, 0], c=y_hr, cmap='viridis', s=X[:, 2] * 50, edgecolor='k')
@@ -103,7 +120,6 @@ def hierarquicoWine():
     
     plt.tight_layout()
     plt.show()
-    
     
 
 
