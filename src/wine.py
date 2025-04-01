@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 from sklearn.metrics import silhouette_score
 from sklearn.datasets import load_wine
 from sklearn.cluster import AgglomerativeClustering, KMeans
@@ -9,6 +11,14 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Carregar o dataset Wine
 wine = load_wine()
+
+def pairplotWine():
+    df_wine = pd.DataFrame(wine.data, columns=wine.feature_names)
+    df_wine['target'] = wine.target
+
+    sns.pairplot(df_wine, hue='target', diag_kind='hist', palette='tab10')
+    plt.suptitle("Pairplot Completo do Dataset Wine", y=1.02)
+    plt.show()
 
 def printWine():
     # Carregar o dataset Wine
