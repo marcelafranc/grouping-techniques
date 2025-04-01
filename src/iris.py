@@ -64,6 +64,7 @@ def hierarquicoIris():
 
     # Formas geométricas baseadas na espécie
     markers = ['o', '^', 's']  # 'o' para Setosa, '^' para Versicolor, 's' para Virginica
+    species = ['Setosa', 'Versicolor', 'Virginica']
     
     # 1- DENDROGRAMAS PRA DECIDIR ONDE TRACAR A LINHA (DEFINIR K)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
@@ -85,13 +86,12 @@ def hierarquicoIris():
     plt.tight_layout()
     plt.show()
 
-    # 2 - DEFINIR O NUMERO DE CLUSTERS (DEFINE K) -- obs: melhor k para iris é 3
-    # "we draw a horizontal line to the longest line that traverses maximum distance up and down
-    #  without intersecting the merging points. So we draw a horizontal line and the number of 
-    # verticle lines it intersects is the optimal number of clusters."
-    #n_clusters = int(input("Digite k: "))
+    # 2 - DEFINIR O NUMERO DE CLUSTERS (DEFINE K)
     n_clusters = determinar_n_clusters(X)
     print(f"Número de clusters sugerido: {n_clusters}")
+
+    # Gerando uma paleta de cores para os clusters
+    cluster_colors = plt.cm.get_cmap("Set1", n_clusters)  # Usando uma paleta com 3 cores
 
     # 3 - GRAFICOS DE DISPERSAO USANDO K DEFINIDO (MELHOR = 3)
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
@@ -106,15 +106,24 @@ def hierarquicoIris():
         clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage_method)
         y_hr = clustering.fit_predict(X)
         
-        for j in range(3):
-            axes[i//2, i%2].scatter(petal_width[y_hr == j], petal_length[y_hr == j], 
-                                    marker=markers[j], label=iris.target_names[j], 
-                                    edgecolor='k', alpha=0.7)
+        # Plotando os clusters com cores diferentes (representando os clusters)
+        for j in range(n_clusters):
+            cluster_indices = y_hr == j  # Índices dos pontos no cluster j
+            # Para cada cluster, plotar os pontos com o formato correspondente à espécie
+            for k in range(3):  # Usando os diferentes formatos para cada espécie
+                species_indices = y == k  # Índices dos pontos da espécie k
+                axes[i//2, i%2].scatter(
+                    petal_width[species_indices & cluster_indices], 
+                    petal_length[species_indices & cluster_indices], 
+                    marker=markers[k], 
+                    color=cluster_colors(j),  # Cor do cluster
+                    edgecolor='k', alpha=0.7
+                )
         
         axes[i//2, i%2].set_title(titles[i])
         axes[i//2, i%2].set_xlabel('Petal Width (cm)')
         axes[i//2, i%2].set_ylabel('Petal Length (cm)')
-        axes[i//2, i%2].legend(title='Clusters')
+        axes[i//2, i%2].legend(species, title="Espécies", loc='upper right')  # Apenas as espécies com seus formatos
     
     plt.tight_layout()
     plt.show()
