@@ -1,5 +1,4 @@
 # Atividade: Técnicas de Agrupamento
 
 - importações 
-pip install scikit-learn
-pip install seaborn
+pip install -r requirements.txt
