@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.metrics import silhouette_score
@@ -8,6 +10,16 @@ from sklearn.preprocessing import MinMaxScaler
 
 # Carregar o dataset Iris
 iris = load_iris()
+
+def pairplotIris():
+
+    
+    df_iris = pd.DataFrame(iris.data, columns=iris.feature_names)
+    df_iris['target'] = iris.target
+
+    sns.pairplot(df_iris, hue='target', diag_kind='hist', palette='tab10')
+    plt.suptitle("Pairplot Completo do Dataset Iris", y=1.02)
+    plt.show()
 
 def printIris():
     # Carregar o dataset Iris
