@@ -1,7 +1,5 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.datasets import load_iris
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.metrics import silhouette_score
@@ -16,11 +14,10 @@ def printIris():
     iris = load_iris()
     X = iris.data
     y = iris.target
-    df_iris = pd.DataFrame(iris.data, columns=iris.feature_names)
 
-    # Normalizar os dados
-    scaler = MinMaxScaler()
-    X_normalized = scaler.fit_transform(X)
+    # Normalizar os dados ---> nao vou usar aqui
+    #scaler = MinMaxScaler()
+    #X_normalized = scaler.fit_transform(X)
 
     # Atributos para o gráfico
     petal_length = X[:, 2]  # Petal Length
@@ -42,11 +39,12 @@ def printIris():
 
 # FUNCAO N_CLUSTERS (MATEMATICA)
 def determinar_n_clusters(X):
+     # extrai as distâncias das fusões -> calcula a diferença entre alturas consecutivas ->  identifica o maior salto
      Z = linkage(X)
-     distancias = Z[:, 2]  # Coluna das distâncias das fusões
-     dif_dist = np.diff(distancias)  # Diferença entre alturas consecutivas
-     maior_salto = np.argmax(dif_dist)  # Índice do maior salto
-     n_clusters = len(X) - maior_salto  # Número de clusters
+     distancias = Z[:, 2]  # coluna das distancias das fusoes
+     dif_dist = np.diff(distancias)  # diferenca entre alturas consecutivas
+     maior_salto = np.argmax(dif_dist)  # indice do maior salto
+     n_clusters = len(X) - maior_salto  # numero de clusters
      return n_clusters
 
 # Agrupamento Hierárquico da Iris
@@ -54,9 +52,9 @@ def hierarquicoIris():
     X = iris.data
     y = iris.target
 
-    # Normalizar os dados
-    scaler = MinMaxScaler()
-    X_normalized = scaler.fit_transform(X)
+    # Normalizar os dados --> nao vou usar aqui
+    #scaler = MinMaxScaler()
+    #X_normalized = scaler.fit_transform(X)
 
     # Atributos para o gráfico
     petal_length = X[:, 2]  # Petal Length

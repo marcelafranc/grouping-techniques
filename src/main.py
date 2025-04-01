@@ -1,8 +1,3 @@
-import pandas as pd
-from sklearn.datasets import load_iris
-from sklearn.datasets import load_wine
-import matplotlib.pyplot as plt
-import seaborn as sns
 from iris import *
 from wine import *
 

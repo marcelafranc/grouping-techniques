@@ -1,8 +1,6 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score
-import seaborn as sns
 from sklearn.datasets import load_wine
 from sklearn.cluster import AgglomerativeClustering, KMeans
 from sklearn.metrics import silhouette_score
@@ -19,7 +17,6 @@ def printWine():
     y = wine.target
     scaler = MinMaxScaler()
     X_normalized = scaler.fit_transform(X)
-    df_wine = pd.DataFrame(X, columns=wine.feature_names)
 
     # Atributos para o gráfico
     alcohol = X[:, 0]        # Coordenada Y (Álcool)
@@ -43,17 +40,17 @@ def printWine():
     # Mostrar o gráfico
     plt.show()
 
-# Método para determinar o número de clusters usando o Silhouette Score
+# Método para determinar o número de clusters usando o Silhouette Score!!!!!!
 def metodo_silhouette(X_normalized):
     scores = []
-    # Testar diferentes números de clusters (de 2 a 10)
+    # testa de 2 a 10
     for k in range(2, 11):
         kmeans = KMeans(n_clusters=k, random_state=42)
         kmeans.fit(X_normalized)
         score = silhouette_score(X_normalized, kmeans.labels_)
         scores.append(score)
 
-    # Plotar o gráfico do Silhouette Score
+    # Plotar o grafico do silhouete !!
     plt.figure(figsize=(8, 6))
     plt.plot(range(2, 11), scores, marker='o')
     plt.title('Silhouette Score para Determinação de k')
@@ -61,8 +58,8 @@ def metodo_silhouette(X_normalized):
     plt.ylabel('Silhouette Score')
     plt.show()
 
-    # Encontrar o k com o melhor Silhouette Score
-    best_k = scores.index(max(scores)) + 2  # Porque a iteração começa de 2
+    # encontrar o k com o melhor silhouete (definicao)
+    best_k = scores.index(max(scores)) + 2  # comeca em 2
     print(f"O melhor número de clusters (k) baseado no Silhouette Score é: {best_k}")
     return best_k
 
